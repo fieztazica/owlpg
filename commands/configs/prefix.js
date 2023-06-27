@@ -8,7 +8,9 @@ module.exports = {
     if (!message.member.permissions.has('ADMINISTRATOR'))
       return message.channel.send("You don't have permission !");
 
-    const prefix = await message.guild.getPrefix()
+    const prefix = await bot.getPrefix(message)
+    const guildId = message.guild.id
+    // await prefix = bot.db.get(`${guildId}.prefix`)
 
     if (!args[0]) return message.lineReply({
       embed: {
@@ -20,7 +22,7 @@ module.exports = {
       }
     })
 
-    message.guild.setPrefix(args[0]).then(data => {
+    bot.db.set(`${guildId}.prefix`, `${args[0]}`).then(value => {
       message.channel.send(
         `From now, your guild's prefix is \`${args[0]}\``
       )

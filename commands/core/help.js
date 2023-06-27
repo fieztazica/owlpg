@@ -1,44 +1,35 @@
+const fs = require('fs')
 var Discord = require("discord.js");
 const Buttons = require('discord-buttons')
 const ButtonsMenu = require("discord-menu-embed");
-
 module.exports = {
     name: 'help',
     aliases: [],
     category: 'Core',
     utilisation: '{prefix}help <command name>',
-    maintance: false,
-    premium: false,
-    permissions: ['ADMINITRATION'],
+
     async execute(bot, message, args) {
-        const prefix = await message.guild.getPrefix() || process.env.PREFIX;
+        const guildId = message.guild.id 
+        const prefix = await bot.db.get(`${guildId}.prefix`) || process.env.PREFIX;
 
         if (!args[0]) {
             
             // fs.readdirSync('./commands').forEach(dirs => {console.log(dirs)})
 
-            
-            const configs = bot.commands
-            .filter(x => x.category == 'Configuration')
-            .map((x) => '`' + x.name + '`')
-            .join(', ');
-            const infos = bot.commands
-            .filter(x => x.category == 'Infos')
-            .map((x) => '`' + x.name + '`')
-            .join(', ');
-            const player = bot.commands
-            .filter(x => x.category == 'Player')
-            .map((x) => '`' + x.name + '`')
-            .join(', ');
+            const fun = bot.commands.filter(x => x.category == 'Fun').map((x) => '`' + x.name + '`').join(', ');
+            const economy = bot.commands.filter(x => x.category == 'Economy').map((x) => '`' + x.name + '`').join(', ');
+            const play = bot.commands.filter(x => x.category == 'Player').map((x) => '`' + x.name + '`').join(', ');
+            const infos = bot.commands.filter(x => x.category == 'Infos').map((x) => '`' + x.name + '`').join(', ');
+            const mod = bot.commands.filter(x => x.category == 'Moderations').map((x) => '`' + x.name + '`').join(', ');
+            const configs = bot.commands.filter(x => x.category == 'Configuration').map((x) => '`' + x.name + '`').join(', ');
 
             Discord.MessageMenu = Buttons.MessageMenu;
             Discord.MessageMenuOption = Buttons.MessageMenuOption;
             Discord.MessageActionRow = Buttons.MessageActionRow;
 
-
             var embeds = [], menu = {};
-            const content = ['Home', 'Commands', 'Informations'];
-            //, 'Fun', 'Player', 'Economy', 'Moderations', 'Configuration'
+            const content = ['Home', 'Commands', 'Informations', 'Fun', 'Player', 'Economy', 'Moderations', 'Configuration'];
+
             const odes = `You can use \`${prefix}help <command>\` to have more informantion.\nYou can also mention me as a prefix.\n\n`
             let des, field, valued;
 
@@ -54,22 +45,22 @@ module.exports = {
                   des = `Provides you to show more informations about anything (I hope so).`
                   valued = infos
                   break;
-                // case 'Fun':
-                //   des = `TRY NOT TO SPEND ALL YOU MONEY ON THIS CATEGORY!`
-                //   valued = fun
-                //   break;
+                case 'Fun':
+                  des = `TRY NOT TO SPEND ALL YOU MONEY ON THIS CATEGORY!`
+                  valued = fun
+                  break;
                 case 'Player':
                   des = `You can customize your profile with color and title which can be bought in shop.`
                   valued = play
                   break;
-                // case 'Economy':
-                //   des = `Hustle, hustle, hustle all day long.`
-                //   valued = economy
-                //   break;
-                // case 'Moderations':
-                //   des = `Those commands relate to this category is just for basic cases.`
-                //   valued = mod
-                //   break;
+                case 'Economy':
+                  des = `Hustle, hustle, hustle all day long.`
+                  valued = economy
+                  break;
+                case 'Moderations':
+                  des = `Those commands relate to this category is just for basic cases.`
+                  valued = mod
+                  break;
                 case 'Configuration':
                   des = `Configuration commands are limited. The developers are working to create more and more functions for this category.`
                   valued = configs
@@ -81,7 +72,7 @@ module.exports = {
                 field = [
                     {
                       name: 'Connections',
-                      value: `**[Youtube](https://www.youtube.com/channel/UCEG5sgFKieaUuHsu5VG-kBg)** | **[Discord](https://discord.link/owlvernyte)** | **[Facebook](https://www.facebook.com/owlvernyte)**`
+                      value: `**[Youtube](https://www.youtube.com/channel/UCEG5sgFKieaUuHsu5VG-kBg)** | **[Discord](https://discord.io/owlvernyte)** | **[Facebook](https://www.facebook.com/owlvernyte)**`
                     },
                     {
                       name: `Vote`,
@@ -91,10 +82,10 @@ module.exports = {
                       name: `Buy me a coffee`,
                       value: `**[Playerduo](https://playerduo.com/owlvernyte)**`
                     },
-                    // { 
-                    //   name: 'Invite me here', 
-                    //   value: `\*\*[CLICK HERE](https://top.gg/bot/853623967180259369/invite)\*\*`
-                    // },
+                    { 
+                      name: 'Invite me here', 
+                      value: `\*\*[CLICK HERE](https://top.gg/bot/853623967180259369/invite)\*\*`
+                    },
                   ]
               } else field = {name: content[i], value: valued}
 
@@ -102,10 +93,10 @@ module.exports = {
                   des = `This page shows you a full list of commands that I have.`
                   field = [
                     { name: 'Informations', value: infos },
-                    // { name: 'Fun', value: fun },
-                    // { name: 'Player', value: play },
-                    // { name: 'Economy', value: economy },
-                    // { name: 'Moderations', value: mod },
+                    { name: 'Fun', value: fun },
+                    { name: 'Player', value: play },
+                    { name: 'Economy', value: economy },
+                    { name: 'Moderations', value: mod },
                     { name: 'Configuration', value: configs },
                   ]
               }
